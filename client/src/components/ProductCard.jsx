@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 import { ChevronDroite } from './Icones.jsx';
-import { formaterPrix, prixFinal } from '../api.js';
+import { formaterPrix, prixFinal, urlMedia } from '../api.js';
 
 function Media({ media, nom, className }) {
   if (media.type === 'video') {
-    return <video className={className} src={media.url} muted playsInline preload="metadata" />;
+    return <video className={className} src={urlMedia(media.url)} muted playsInline preload="metadata" />;
   }
-  return <img className={className} src={media.url} alt={nom} loading="lazy" />;
+  return <img className={className} src={urlMedia(media.url)} alt={nom} loading="lazy" />;
 }
 
 export default function ProductCard({ produit }) {

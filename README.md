@@ -81,12 +81,39 @@ client/
 | POST | `/api/upload` | admin |
 | GET | `/api/gouvernorats` | public |
 
-## Mise en production
+## Déploiement
 
-1. `cd client && npm run build` produit `client/dist`.
-2. Servez `client/dist` avec votre hébergeur et faites pointer `/api` et `/uploads`
-   vers le serveur Node.
-3. Dans `server/.env` : changez `ADMIN_PASSWORD` et `JWT_SECRET`, et renseignez
-   `CLIENT_ORIGIN` avec le domaine réel.
-4. Les fichiers envoyés sont stockés dans `server/uploads` : prévoyez une sauvegarde
-   ou un stockage externe.
+| Partie | Hébergeur | Dossier |
+|---|---|---|
+| Site (React) | Netlify | `client/` — configuré par `netlify.toml` |
+| API (Node) | Render | `server/` |
+| Base de données | MongoDB Atlas | — |
+| Photos et vidéos | Cloudinary | — |
+
+**Pourquoi Cloudinary :** le disque de Render (offre gratuite) est effacé à chaque
+redémarrage. Les fichiers envoyés depuis le tableau de bord y seraient perdus.
+Quand `CLOUDINARY_URL` est définie, l'API les envoie sur Cloudinary ; sinon (en local)
+ils restent dans `server/uploads/`.
+
+### Variables Netlify
+
+| Nom | Valeur |
+|---|---|
+| `VITE_API_URL` | adresse Render, ex. `https://trouvetout-api.onrender.com` (sans `/` final) |
+
+Elle est intégrée au moment du build : après l'avoir modifiée, relancez un déploiement.
+
+### Variables Render
+
+| Nom | Valeur |
+|---|---|
+| `MONGODB_URI` | chaîne de connexion Atlas |
+| `MONGODB_DB` | `econs` |
+| `ADMIN_PASSWORD` | mot de passe du tableau de bord (solide) |
+| `JWT_SECRET` | longue chaîne aléatoire |
+| `CLIENT_ORIGIN` | adresse Netlify, ex. `https://trouvetout.netlify.app` |
+| `CLOUDINARY_URL` | `cloudinary://...` (tableau de bord Cloudinary) |
+
+Render : dossier racine `server`, build `npm install`, démarrage `npm start`,
+vérification de santé `/api/sante`. Dans Atlas, autorisez l'accès réseau `0.0.0.0/0`
+(Render n'a pas d'adresse IP fixe).

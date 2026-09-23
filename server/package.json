@@ -3,11 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "node --watch-path=src --use-system-ca src/index.js",
-    "start": "node --use-system-ca src/index.js"
+    "start": "node src/index.js"
   },
   "dependencies": {
+    "cloudinary": "^2.11.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",

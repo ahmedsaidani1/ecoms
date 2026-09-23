@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { api, formaterPrix, prixFinal } from '../../api.js';
+import { api, formaterPrix, prixFinal, urlMedia } from '../../api.js';
 
 const VIDE = {
   nom: '',
@@ -245,9 +245,9 @@ export default function FormulaireProduit() {
               {valeurs.medias.map((m, i) => (
                 <div className="media-item" key={m.url + i}>
                   {m.type === 'video' ? (
-                    <video src={m.url} muted preload="metadata" />
+                    <video src={urlMedia(m.url)} muted preload="metadata" />
                   ) : (
-                    <img src={m.url} alt="" />
+                    <img src={urlMedia(m.url)} alt="" />
                   )}
                   <button
                     type="button"

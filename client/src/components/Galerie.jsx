@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { urlMedia } from '../api.js';
 
 export default function Galerie({ medias = [], nom }) {
   const [index, setIndex] = useState(0);
@@ -20,9 +21,9 @@ export default function Galerie({ medias = [], nom }) {
     <div className="galerie">
       <div className="galerie-principale">
         {actif.type === 'video' ? (
-          <video key={actif.url} src={actif.url} controls playsInline />
+          <video key={actif.url} src={urlMedia(actif.url)} controls playsInline />
         ) : (
-          <img key={actif.url} src={actif.url} alt={nom} />
+          <img key={actif.url} src={urlMedia(actif.url)} alt={nom} />
         )}
       </div>
 
@@ -38,11 +39,11 @@ export default function Galerie({ medias = [], nom }) {
             >
               {m.type === 'video' ? (
                 <>
-                  <video src={m.url} muted preload="metadata" />
+                  <video src={urlMedia(m.url)} muted preload="metadata" />
                   <span className="badge-video">Vidéo</span>
                 </>
               ) : (
-                <img src={m.url} alt="" />
+                <img src={urlMedia(m.url)} alt="" />
               )}
             </button>
           ))}

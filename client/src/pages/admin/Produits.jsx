@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { api, formaterPrix, prixFinal } from '../../api.js';
+import { api, formaterPrix, prixFinal, urlMedia } from '../../api.js';
 
 export default function Produits() {
   const [produits, setProduits] = useState([]);
@@ -68,7 +68,7 @@ export default function Produits() {
                     <td>
                       <div className="cellule-produit">
                         {media && media.type === 'image' ? (
-                          <img src={media.url} alt="" />
+                          <img src={urlMedia(media.url)} alt="" />
                         ) : (
                           <div className="sans-image-mini" />
                         )}

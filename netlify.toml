@@ -1,0 +1,16 @@
+# Deploiement du site (dossier client/) sur Netlify
+
+[build]
+  base = "client"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Application a page unique : toutes les adresses (/produits, /produit/..., /admin)
+# servent index.html, et React Router affiche la bonne page.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,5 +1,16 @@
 const CLE_TOKEN = 'econs_admin_token';
 
+// Adresse de l'API. Vide en developpement (le proxy Vite redirige /api) ;
+// en production, VITE_API_URL pointe vers le serveur Render.
+export const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+
+// Les photos televersees en local sont stockees en chemin relatif (/uploads/...) :
+// on les prefixe par l'adresse de l'API. Les URL completes (Cloudinary) restent telles quelles.
+export function urlMedia(url) {
+  if (!url) return url;
+  return url.startsWith('/') ? `${API_URL}${url}` : url;
+}
+
 export const getToken = () => localStorage.getItem(CLE_TOKEN);
 export const setToken = (t) => localStorage.setItem(CLE_TOKEN, t);
 export const clearToken = () => localStorage.removeItem(CLE_TOKEN);
@@ -16,7 +27,7 @@ async function requete(chemin, options = {}) {
 
   let reponse;
   try {
-    reponse = await fetch(`/api${chemin}`, { ...options, headers });
+    reponse = await fetch(`${API_URL}/api${chemin}`, { ...options, headers });
   } catch {
     throw erreurHorsLigne();
   }

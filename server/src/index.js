@@ -15,7 +15,14 @@ import { GOUVERNORATS } from './utils/gouvernorats.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
-app.use(cors({ origin: (process.env.CLIENT_ORIGIN || '').replace(/^"|"$/g, '') || true }));
+// Sites autorises a appeler l'API, separes par des virgules
+// (ex. "https://trouvetout.netlify.app,http://localhost:5173").
+const originesAutorisees = (process.env.CLIENT_ORIGIN || '')
+  .split(',')
+  .map((o) => o.trim().replace(/^"|"$/g, '').replace(/\/+$/, ''))
+  .filter(Boolean);
+
+app.use(cors({ origin: originesAutorisees.length ? originesAutorisees : true }));
 app.use(express.json({ limit: '2mb' }));
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 

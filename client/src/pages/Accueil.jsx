@@ -5,7 +5,7 @@ import ProductCard from '../components/ProductCard.jsx';
 import Squelette from '../components/Squelette.jsx';
 import { ChevronDroite } from '../components/Icones.jsx';
 import { useReveal } from '../hooks/useReveal.js';
-import { api, formaterPrix, prixFinal } from '../api.js';
+import { api, formaterPrix, prixFinal, urlMedia } from '../api.js';
 
 const ANNONCES = [
   'Livraison dans les 24 gouvernorats',
@@ -145,7 +145,7 @@ export default function Accueil() {
                   to={`/produit/${produit.slug}`}
                   className={`photo photo-${i + 1}`}
                 >
-                  <img src={url} alt={produit.nom} />
+                  <img src={urlMedia(url)} alt={produit.nom} />
                   {/* Une seule legende par produit, meme s'il occupe plusieurs cadres */}
                   {vitrine.findIndex((v) => v.produit._id === produit._id) === i && (
                     <span className="photo-legende">
@@ -241,7 +241,7 @@ export default function Accueil() {
                   <span className="rayon-compte">
                     {r.nombre} produit{r.nombre > 1 ? 's' : ''}
                   </span>
-                  {r.photo && <img className="rayon-image" src={r.photo} alt="" loading="lazy" />}
+                  {r.photo && <img className="rayon-image" src={urlMedia(r.photo)} alt="" loading="lazy" />}
                   <span className="rayon-fleche" aria-hidden="true">
                     <ChevronDroite />
                   </span>
