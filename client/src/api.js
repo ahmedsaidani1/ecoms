@@ -4,6 +4,13 @@ const CLE_TOKEN = 'econs_admin_token';
 // en production, VITE_API_URL pointe vers le serveur Render.
 export const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 
+if (import.meta.env.PROD && !API_URL) {
+  console.warn(
+    "VITE_API_URL n'est pas definie : le site ne peut pas joindre l'API. " +
+      'Ajoutez-la dans Netlify (Environment variables) puis redeployez.'
+  );
+}
+
 // Les photos televersees en local sont stockees en chemin relatif (/uploads/...) :
 // on les prefixe par l'adresse de l'API. Les URL completes (Cloudinary) restent telles quelles.
 export function urlMedia(url) {
@@ -37,7 +44,10 @@ async function requete(chemin, options = {}) {
   try {
     data = texte ? JSON.parse(texte) : null;
   } catch {
-    // Reponse non JSON (ex. page d'erreur du proxy)
+    // Pas du JSON : ce n'est pas l'API qui a repondu (page HTML de l'hebergeur,
+    // page d'erreur du proxy...). Meme avec un statut 200, on ne renvoie pas null :
+    // les pages attendent des tableaux et planteraient.
+    throw erreurHorsLigne();
   }
 
   if (!reponse.ok) {
