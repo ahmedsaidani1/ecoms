@@ -1,0 +1,888 @@
+/* ================================================================
+   Produits — cartes, carrousel, liste, fiche produit, commande
+   ================================================================ */
+
+/* ---------- Carte produit ---------- */
+.grille-produits {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 36px 24px;
+}
+
+.carte {
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+}
+
+.carte-visuel {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--r-m);
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  transition: transform 0.45s var(--doux), box-shadow 0.35s ease;
+}
+
+.carte:hover .carte-visuel {
+  transform: translateY(-6px);
+  box-shadow: var(--ombre-haute);
+}
+
+.carte-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s var(--doux), opacity 0.45s ease;
+}
+
+.carte:hover .carte-image {
+  transform: scale(1.06);
+}
+
+/* Deuxieme photo qui apparait au survol */
+.carte-image-2 {
+  opacity: 0;
+}
+
+.carte:hover .carte-image-2 {
+  opacity: 1;
+}
+
+.sans-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: var(--papier-2);
+  color: var(--gris-clair);
+  font-size: 14px;
+}
+
+.sans-image img {
+  width: 34%;
+  opacity: 0.35;
+}
+
+/* Etiquette de prix facon boutique : un trou, une legere inclinaison */
+.etiquette {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px 6px 22px;
+  border-radius: 5px 12px 12px 5px;
+  background: var(--brique);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transform: rotate(-7deg);
+  transform-origin: left center;
+  transition: transform 0.4s var(--doux);
+}
+
+.etiquette::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-radius: 50%;
+  background: var(--carte);
+}
+
+.carte:hover .etiquette {
+  transform: rotate(-12deg);
+}
+
+.pastille {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  padding: 5px 11px;
+  border-radius: var(--pilule);
+  background: var(--safran);
+  color: var(--encre);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.carte-rupture {
+  position: absolute;
+  inset: auto 14px 14px 14px;
+  z-index: 3;
+  padding: 7px;
+  border-radius: var(--pilule);
+  background: rgba(251, 247, 240, 0.94);
+  color: var(--encre);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.carte-voir {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 3;
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--encre);
+  color: var(--papier);
+  opacity: 0;
+  transform: translateY(12px) scale(0.8);
+  transition: opacity 0.3s ease, transform 0.4s var(--doux);
+}
+
+.carte:hover .carte-voir,
+.carte:focus-visible .carte-voir {
+  opacity: 1;
+  transform: none;
+}
+
+.carte-corps {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 16px 4px 0;
+}
+
+.carte-categorie {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brique);
+}
+
+.carte-nom {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--texte);
+  transition: color 0.2s ease;
+}
+
+.carte:hover .carte-nom {
+  color: var(--encre);
+  text-decoration: underline;
+  text-decoration-color: var(--safran);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.prix-ligne {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.prix {
+  font-family: var(--titre);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.prix-barre {
+  font-size: 14px;
+  color: var(--gris-clair);
+  text-decoration: line-through;
+}
+
+.rupture {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brique);
+}
+
+/* ---------- Carrousel ---------- */
+.carrousel-piste {
+  display: flex;
+  gap: 24px;
+  margin: -16px -12px 0;
+  padding: 16px 12px 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.carrousel-piste::-webkit-scrollbar {
+  display: none;
+}
+
+.carrousel-element {
+  flex: 0 0 auto;
+  width: calc((100% - 72px) / 4);
+  min-width: 230px;
+  scroll-snap-align: start;
+}
+
+.carrousel-fleches {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.carrousel-fleches .lien-souligne {
+  margin-right: 10px;
+}
+
+.fleche {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1.5px solid var(--encre);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--encre);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.3s var(--doux);
+}
+
+.fleche:hover:not(:disabled) {
+  background: var(--encre);
+  color: var(--papier);
+  transform: scale(1.06);
+}
+
+.fleche:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+/* ---------- Page liste ---------- */
+.page-entete {
+  padding: 56px 0 44px;
+  background: var(--papier-2);
+}
+
+.page-entete-ligne {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.page-entete h1 {
+  font-size: clamp(38px, 5vw, 64px);
+  letter-spacing: -0.03em;
+}
+
+.compteur {
+  display: inline-flex;
+  margin-top: 12px;
+  padding: 4px 12px;
+  border-radius: var(--pilule);
+  background: var(--carte);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--encre-doux);
+}
+
+.recherche {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+}
+
+.recherche svg {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--encre-doux);
+  pointer-events: none;
+}
+
+.recherche input {
+  padding: 14px 18px 14px 46px;
+  border-radius: var(--pilule);
+  border-color: var(--carte);
+  background: var(--carte);
+}
+
+.disposition-produits {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+  padding-top: 48px;
+}
+
+.colonne-produits {
+  min-width: 0;
+}
+
+.filtres {
+  position: sticky;
+  top: 100px;
+}
+
+.filtres-entete {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.filtres-entete h3 {
+  font-size: 22px;
+}
+
+.reinitialiser {
+  padding: 0;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid var(--safran);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--encre);
+  cursor: pointer;
+}
+
+.filtres-groupe {
+  margin-bottom: 30px;
+}
+
+.filtres-groupe h4 {
+  margin-bottom: 12px;
+  font-family: var(--corps);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--gris-clair);
+}
+
+.filtres-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filtre-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 16px;
+  border: 1.5px solid transparent;
+  border-radius: var(--pilule);
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: left;
+  color: var(--texte);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, padding-left 0.3s var(--doux);
+}
+
+.filtre-option:hover {
+  background: var(--papier-2);
+  padding-left: 20px;
+}
+
+.filtre-option.active {
+  background: var(--encre);
+  color: var(--papier);
+  font-weight: 600;
+}
+
+.filtre-option.active::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--safran);
+}
+
+/* ---------- Fiche produit ---------- */
+.fil-ariane {
+  padding: 26px 0;
+  font-size: 14px;
+  color: var(--gris-clair);
+}
+
+.fil-ariane a {
+  color: var(--encre-doux);
+  transition: color 0.2s ease;
+}
+
+.fil-ariane a:hover {
+  color: var(--encre);
+}
+
+.produit-grille {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 64px;
+  padding-bottom: 88px;
+}
+
+.galerie {
+  position: sticky;
+  top: 100px;
+}
+
+.galerie-principale {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--r-l);
+  background: var(--carte);
+  border: 1px solid var(--trait);
+}
+
+.galerie-principale img,
+.galerie-principale video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: fondu 0.45s ease;
+}
+
+@keyframes fondu {
+  from {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.galerie-vignettes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.vignette {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: var(--r-m);
+  background: var(--carte);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, border-color 0.2s ease, transform 0.3s var(--doux);
+}
+
+.vignette:hover {
+  opacity: 1;
+  transform: translateY(-3px);
+}
+
+.vignette.active {
+  opacity: 1;
+  border-color: var(--encre);
+}
+
+.vignette img,
+.vignette video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.badge-video {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  padding: 1px 6px;
+  border-radius: var(--pilule);
+  background: var(--encre);
+  color: var(--papier);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.produit-info .carte-categorie {
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.produit-info h1 {
+  margin-bottom: 18px;
+  font-size: clamp(32px, 3.6vw, 46px);
+}
+
+.produit-prix {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.produit-prix .prix {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.produit-prix .prix-barre {
+  font-size: 18px;
+}
+
+.produit-prix .etiquette {
+  position: static;
+  transform: rotate(-4deg);
+}
+
+.economie {
+  margin-bottom: 22px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--succes);
+}
+
+.produit-description {
+  margin: 22px 0 26px;
+  padding-top: 22px;
+  border-top: 1.5px dashed var(--trait-fort);
+  color: var(--encre-doux);
+  white-space: pre-line;
+}
+
+.garanties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0 0 28px;
+  padding: 0;
+  list-style: none;
+}
+
+.garanties li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--r-m);
+  background: var(--papier-2);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--encre);
+}
+
+.garanties li::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--safran);
+  box-shadow: 0 0 0 4px var(--safran-clair);
+}
+
+/* ---------- Bloc de commande ---------- */
+.bloc-commande {
+  overflow: hidden;
+  border-radius: var(--r-l);
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  box-shadow: var(--ombre-douce);
+}
+
+.bloc-commande-entete {
+  padding: 20px 26px;
+  background: var(--encre);
+  color: var(--papier);
+}
+
+.bloc-commande-entete h3 {
+  color: var(--papier);
+  font-size: 22px;
+}
+
+.bloc-commande-entete p {
+  margin-top: 4px;
+  font-size: 14px;
+  color: rgba(251, 247, 240, 0.72);
+}
+
+.bloc-commande-corps {
+  padding: 24px 26px 26px;
+}
+
+.total-ligne {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 6px 0 20px;
+  padding: 18px 0 0;
+  border-top: 1.5px dashed var(--trait-fort);
+  font-weight: 600;
+  color: var(--encre);
+}
+
+.total-ligne span:last-child {
+  font-family: var(--titre);
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.quantite {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  overflow: hidden;
+  border: 1.5px solid var(--trait);
+  border-radius: var(--pilule);
+  background: var(--carte);
+}
+
+.quantite button {
+  width: 46px;
+  height: 46px;
+  border: 0;
+  background: none;
+  font-size: 20px;
+  color: var(--encre);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.quantite button:hover:not(:disabled) {
+  background: var(--papier-2);
+}
+
+.quantite button:disabled {
+  color: var(--trait-fort);
+  cursor: not-allowed;
+}
+
+.quantite input {
+  width: 56px;
+  height: 46px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  text-align: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.quantite input:focus {
+  box-shadow: none;
+}
+
+.confirmation {
+  padding: 40px 28px;
+  border-radius: var(--r-l);
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  text-align: center;
+  animation: monter 0.6s var(--doux);
+}
+
+.confirmation-marque {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--safran);
+  font-family: var(--titre);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.confirmation h3 {
+  margin-bottom: 10px;
+  font-size: 28px;
+}
+
+.confirmation p {
+  margin-bottom: 6px;
+  color: var(--encre-doux);
+}
+
+.confirmation .numero {
+  display: inline-block;
+  margin: 10px 0 8px;
+  padding: 6px 14px;
+  border-radius: var(--pilule);
+  background: var(--papier-2);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.confirmation .btn {
+  margin-top: 18px;
+}
+
+/* ---------- Selecteur de gouvernorat ---------- */
+.selecteur {
+  position: relative;
+}
+
+.selecteur-liste {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-height: 260px;
+  padding: 6px;
+  overflow-y: auto;
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: var(--r-m);
+  box-shadow: var(--ombre-haute);
+}
+
+.selecteur-option {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: var(--r-s);
+  background: none;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.selecteur-option:hover,
+.selecteur-option.survol {
+  background: var(--papier-2);
+}
+
+.selecteur-option.choisi {
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.selecteur-vide {
+  padding: 12px 14px;
+  font-size: 14px;
+  color: var(--gris-clair);
+}
+
+/* ---------- Reactivite ---------- */
+@media (max-width: 980px) {
+  .produit-grille {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .galerie {
+    position: static;
+  }
+  .carrousel-element {
+    width: calc((100% - 24px) / 2);
+  }
+  .disposition-produits {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-top: 28px;
+  }
+  .filtres {
+    position: static;
+  }
+  .filtres-groupe {
+    margin-bottom: 16px;
+  }
+  .filtres-liste {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .filtre-option {
+    width: auto;
+    gap: 8px;
+    border-color: var(--trait-fort);
+    font-size: 14px;
+  }
+  .filtre-option:hover {
+    padding-left: 16px;
+  }
+  .filtre-option.active {
+    border-color: var(--encre);
+  }
+}
+
+@media (max-width: 720px) {
+  .grille-produits {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 14px;
+  }
+  .carrousel-element {
+    width: 70%;
+    min-width: 0;
+  }
+  .carte-nom {
+    font-size: 14px;
+  }
+  .prix {
+    font-size: 19px;
+  }
+  .etiquette {
+    top: 10px;
+    left: 10px;
+    padding: 4px 9px 4px 18px;
+    font-size: 12px;
+  }
+  .etiquette::before {
+    left: 6px;
+    width: 6px;
+    height: 6px;
+    margin-top: -3px;
+  }
+  .pastille {
+    top: 10px;
+    right: 10px;
+    font-size: 11px;
+    padding: 4px 9px;
+  }
+  .carte-voir {
+    display: none;
+  }
+  .page-entete {
+    padding: 36px 0 30px;
+  }
+  .recherche {
+    max-width: none;
+  }
+  .produit-prix .prix {
+    font-size: 34px;
+  }
+  .garanties {
+    grid-template-columns: 1fr;
+  }
+  .bloc-commande-entete,
+  .bloc-commande-corps {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}

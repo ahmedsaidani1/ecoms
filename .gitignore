@@ -1,0 +1,13 @@
+# Dependances et builds
+node_modules/
+dist/
+
+# Secrets : ne jamais publier (identifiants MongoDB, mot de passe admin, JWT)
+.env
+.env.*
+!.env.example
+
+# Journaux et fichiers systeme
+*.log
+.DS_Store
+Thumbs.db
