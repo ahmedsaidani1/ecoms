@@ -3,7 +3,6 @@ import Order, { STATUTS } from '../models/Order.js';
 import Product from '../models/Product.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { GOUVERNORATS } from '../utils/gouvernorats.js';
-import { fraisLivraison } from '../utils/livraison.js';
 
 const router = Router();
 
@@ -42,9 +41,6 @@ router.post('/', async (req, res, next) => {
     }
 
     const prixUnitaire = produit.prixFinal;
-    const sousTotal = Math.round(prixUnitaire * quantite * 1000) / 1000;
-    const frais = fraisLivraison(sousTotal);
-
     const commande = await Order.create({
       nomComplet,
       gouvernorat,
@@ -55,18 +51,11 @@ router.post('/', async (req, res, next) => {
       produitNom: produit.nom,
       prixUnitaire,
       promotion: produit.promotion,
-      sousTotal,
-      fraisLivraison: frais,
-      total: Math.round((sousTotal + frais) * 1000) / 1000,
+      total: Math.round(prixUnitaire * quantite * 1000) / 1000,
       note: (req.body.note || '').trim(),
     });
 
-    res.status(201).json({
-      numero: commande.numero,
-      sousTotal: commande.sousTotal,
-      fraisLivraison: commande.fraisLivraison,
-      total: commande.total,
-    });
+    res.status(201).json({ numero: commande.numero, total: commande.total });
   } catch (e) {
     next(e);
   }

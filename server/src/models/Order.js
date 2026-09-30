@@ -16,8 +16,6 @@ const orderSchema = new mongoose.Schema(
     produitNom: { type: String, required: true },
     prixUnitaire: { type: Number, required: true },
     promotion: { type: Number, default: 0 },
-    sousTotal: { type: Number },
-    fraisLivraison: { type: Number, default: 0 },
     total: { type: Number, required: true },
     statut: { type: String, enum: STATUTS, default: 'en attente' },
     note: { type: String, default: '' },

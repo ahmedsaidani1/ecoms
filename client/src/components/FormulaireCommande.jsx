@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import SelecteurGouvernorat from './SelecteurGouvernorat.jsx';
 import { api, formaterPrix, prixFinal } from '../api.js';
-import { LIVRAISON, fraisLivraison } from '../data/livraison.js';
 
 const VIDE = { nomComplet: '', gouvernorat: '', adresse: '', telephone: '', quantite: 1 };
 
@@ -13,10 +12,7 @@ export default function FormulaireCommande({ produit }) {
   const [confirmee, setConfirmee] = useState(null);
 
   const unitaire = prixFinal(produit);
-  const sousTotal = unitaire * (Number(valeurs.quantite) || 0);
-  const frais = fraisLivraison(sousTotal);
-  const total = sousTotal + frais;
-  const resteAvantGratuit = LIVRAISON.seuilGratuit - sousTotal;
+  const total = unitaire * (Number(valeurs.quantite) || 0);
   const rupture = produit.stock === 0;
 
   function modifier(champ, valeur) {
@@ -66,10 +62,7 @@ export default function FormulaireCommande({ produit }) {
         <h3>Merci, c’est noté !</h3>
         <p>Nous vous appellerons pour confirmer la livraison.</p>
         <p className="numero">Commande {confirmee.numero}</p>
-        <p>
-          Total à payer à la réception : {formaterPrix(confirmee.total)}
-          {confirmee.fraisLivraison > 0 ? ' (livraison comprise)' : ' (livraison offerte)'}
-        </p>
+        <p>Total à payer à la réception : {formaterPrix(confirmee.total)}</p>
         <button type="button" className="btn btn-secondaire" onClick={() => setConfirmee(null)}>
           Passer une autre commande
         </button>
@@ -168,22 +161,6 @@ export default function FormulaireCommande({ produit }) {
           </div>
           {erreurs.quantite && <span className="erreur-champ">{erreurs.quantite}</span>}
         </div>
-
-        <dl className="recap">
-          <div>
-            <dt>Sous-total</dt>
-            <dd>{formaterPrix(sousTotal)}</dd>
-          </div>
-          <div>
-            <dt>Livraison</dt>
-            <dd>{frais === 0 ? <span className="offerte">Offerte</span> : formaterPrix(frais)}</dd>
-          </div>
-        </dl>
-        {frais > 0 && resteAvantGratuit > 0 && (
-          <p className="astuce-livraison">
-            Plus que {formaterPrix(resteAvantGratuit)} pour profiter de la livraison offerte.
-          </p>
-        )}
 
         <div className="total-ligne">
           <span>Total</span>

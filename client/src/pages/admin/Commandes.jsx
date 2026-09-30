@@ -161,12 +161,7 @@ export default function Commandes() {
                   <td>{c.telephone}</td>
                   <td>{c.produitNom}</td>
                   <td>{c.quantite}</td>
-                  <td style={{ whiteSpace: 'nowrap' }}>
-                    {formaterPrix(c.total)}
-                    {c.fraisLivraison > 0 && (
-                      <div className="sous-ligne">dont {formaterPrix(c.fraisLivraison)} livraison</div>
-                    )}
-                  </td>
+                  <td style={{ whiteSpace: 'nowrap' }}>{formaterPrix(c.total)}</td>
                   <td>
                     <span className={`etat ${CLASSES[c.statut]}`} style={{ marginBottom: 6 }}>
                       {LIBELLES[c.statut]}

@@ -4,7 +4,6 @@ import Galerie from '../components/Galerie.jsx';
 import FormulaireCommande from '../components/FormulaireCommande.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import { api, formaterPrix, prixFinal } from '../api.js';
-import { LIVRAISON } from '../data/livraison.js';
 
 export default function DetailProduit() {
   const { slug } = useParams();
@@ -109,13 +108,6 @@ export default function DetailProduit() {
               Vous économisez {formaterPrix(produit.prix - prixFinal(produit))}
             </p>
           )}
-
-          <p className="info-livraison">
-            <span>
-              Livraison <strong>{formaterPrix(LIVRAISON.frais)}</strong> — offerte dès{' '}
-              <strong>{formaterPrix(LIVRAISON.seuilGratuit)}</strong> d’achat.
-            </span>
-          </p>
 
           {produit.description && <p className="produit-description">{produit.description}</p>}
 
