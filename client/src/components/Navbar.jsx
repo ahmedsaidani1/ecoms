@@ -1,13 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { ChevronBas, Croix, Loupe, Menu } from './Icones.jsx';
+import { estAdmin } from '../api.js';
 
 export default function Navbar({ categories }) {
   const [tiroirOuvert, setTiroirOuvert] = useState(false);
   const [categoriesOuvertes, setCategoriesOuvertes] = useState(false);
   const [defile, setDefile] = useState(false);
+  const [, rafraichir] = useState(0);
   const deroulant = useRef(null);
   const location = useLocation();
+
+  // Connexion ou deconnexion dans un autre onglet : le raccourci admin suit
+  useEffect(() => {
+    const surStockage = () => rafraichir((n) => n + 1);
+    window.addEventListener('storage', surStockage);
+    return () => window.removeEventListener('storage', surStockage);
+  }, []);
 
   // Ferme tout a chaque changement de page
   useEffect(() => {
@@ -58,6 +67,7 @@ export default function Navbar({ categories }) {
   const categorieActive = surProduits ? params.get('categorie') : null;
   const promoActive = surProduits && params.get('promo') === 'true';
   const tousActif = surProduits && !promoActive && !categorieActive;
+  const admin = estAdmin();
 
   return (
     <>
@@ -102,6 +112,12 @@ export default function Navbar({ categories }) {
           </nav>
 
           <div className="entete-actions">
+            {admin && (
+              <Link to="/admin" className="lien-admin">
+                Tableau de bord
+              </Link>
+            )}
+
             {/* La page produits a deja sa propre recherche */}
             {!surProduits && (
               <Link to="/produits" className="bouton-recherche">
@@ -150,6 +166,11 @@ export default function Navbar({ categories }) {
         </div>
 
         <nav className="tiroir-liens">
+          {admin && (
+            <Link to="/admin" className="tiroir-admin">
+              Tableau de bord
+            </Link>
+          )}
           <NavLink to="/" className={({ isActive }) => (isActive ? 'actif' : '')} end>
             Accueil
           </NavLink>

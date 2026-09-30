@@ -22,6 +22,20 @@ export const getToken = () => localStorage.getItem(CLE_TOKEN);
 export const setToken = (t) => localStorage.setItem(CLE_TOKEN, t);
 export const clearToken = () => localStorage.removeItem(CLE_TOKEN);
 
+// Vrai si ce navigateur a une session admin non expiree (jeton valable 7 jours).
+// Sert seulement a afficher un raccourci : le serveur reste seul juge des acces.
+export function estAdmin() {
+  const token = getToken();
+  if (!token) return false;
+  try {
+    const charge = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const { exp } = JSON.parse(atob(charge));
+    return !exp || exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
+}
+
 async function requete(chemin, options = {}) {
   const headers = { ...(options.headers || {}) };
   if (options.body && !(options.body instanceof FormData)) {

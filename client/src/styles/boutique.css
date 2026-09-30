@@ -1051,3 +1051,55 @@
     gap: 32px;
   }
 }
+
+/* ---------- Raccourci vers le tableau de bord (admin connecte) ---------- */
+.lien-admin {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--pilule);
+  background: var(--encre);
+  color: var(--papier);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.2s var(--doux);
+}
+
+.lien-admin::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--safran);
+}
+
+.lien-admin:hover {
+  background: var(--encre-vif);
+  transform: translateY(-1px);
+}
+
+.tiroir-liens a.tiroir-admin {
+  margin-bottom: 6px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: var(--r-m);
+  background: var(--encre);
+  color: var(--papier);
+  font-family: var(--corps);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.tiroir-liens a.tiroir-admin:hover {
+  padding-left: 16px;
+  background: var(--encre-vif);
+}
+
+/* Sur mobile, le raccourci vit dans le menu lateral */
+@media (max-width: 820px) {
+  .lien-admin {
+    display: none;
+  }
+}
