@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import SelecteurGouvernorat from './SelecteurGouvernorat.jsx';
 import { api, formaterPrix, prixFinal } from '../api.js';
+import { LIVRAISON, fraisLivraison } from '../data/livraison.js';
 
-const VIDE = { nomComplet: '', gouvernorat: '', telephone: '', quantite: 1 };
+const VIDE = { nomComplet: '', gouvernorat: '', adresse: '', telephone: '', quantite: 1 };
 
 export default function FormulaireCommande({ produit }) {
   const [valeurs, setValeurs] = useState(VIDE);
@@ -12,7 +13,10 @@ export default function FormulaireCommande({ produit }) {
   const [confirmee, setConfirmee] = useState(null);
 
   const unitaire = prixFinal(produit);
-  const total = unitaire * (Number(valeurs.quantite) || 0);
+  const sousTotal = unitaire * (Number(valeurs.quantite) || 0);
+  const frais = fraisLivraison(sousTotal);
+  const total = sousTotal + frais;
+  const resteAvantGratuit = LIVRAISON.seuilGratuit - sousTotal;
   const rupture = produit.stock === 0;
 
   function modifier(champ, valeur) {
@@ -24,6 +28,7 @@ export default function FormulaireCommande({ produit }) {
     const e = {};
     if (valeurs.nomComplet.trim().length < 3) e.nomComplet = 'Entrez votre nom complet';
     if (!valeurs.gouvernorat) e.gouvernorat = 'Choisissez votre gouvernorat';
+    if (valeurs.adresse.trim().length < 5) e.adresse = 'Entrez votre adresse de livraison';
     if (!/^[0-9]{8}$/.test(valeurs.telephone)) e.telephone = 'Le numéro doit contenir 8 chiffres';
     const q = Number(valeurs.quantite);
     if (!Number.isInteger(q) || q < 1) e.quantite = 'Quantité invalide';
@@ -61,7 +66,10 @@ export default function FormulaireCommande({ produit }) {
         <h3>Merci, c’est noté !</h3>
         <p>Nous vous appellerons pour confirmer la livraison.</p>
         <p className="numero">Commande {confirmee.numero}</p>
-        <p>Total à payer à la réception : {formaterPrix(confirmee.total)}</p>
+        <p>
+          Total à payer à la réception : {formaterPrix(confirmee.total)}
+          {confirmee.fraisLivraison > 0 ? ' (livraison comprise)' : ' (livraison offerte)'}
+        </p>
         <button type="button" className="btn btn-secondaire" onClick={() => setConfirmee(null)}>
           Passer une autre commande
         </button>
@@ -103,6 +111,21 @@ export default function FormulaireCommande({ produit }) {
         </div>
 
         <div className="champ">
+          <label htmlFor="adresse">Adresse de livraison</label>
+          <input
+            id="adresse"
+            type="text"
+            maxLength={200}
+            autoComplete="street-address"
+            value={valeurs.adresse}
+            className={erreurs.adresse ? 'invalide' : ''}
+            onChange={(e) => modifier('adresse', e.target.value)}
+            placeholder="Rue, numéro, ville ou délégation"
+          />
+          {erreurs.adresse && <span className="erreur-champ">{erreurs.adresse}</span>}
+        </div>
+
+        <div className="champ">
           <label htmlFor="telephone">Numéro de téléphone</label>
           <input
             id="telephone"
@@ -114,11 +137,7 @@ export default function FormulaireCommande({ produit }) {
             onChange={(e) => modifier('telephone', e.target.value.replace(/\D/g, '').slice(0, 8))}
             placeholder="8 chiffres"
           />
-          {erreurs.telephone ? (
-            <span className="erreur-champ">{erreurs.telephone}</span>
-          ) : (
-            <span className="aide">Exemple : 20123456</span>
-          )}
+          {erreurs.telephone && <span className="erreur-champ">{erreurs.telephone}</span>}
         </div>
 
         <div className="champ">
@@ -149,6 +168,22 @@ export default function FormulaireCommande({ produit }) {
           </div>
           {erreurs.quantite && <span className="erreur-champ">{erreurs.quantite}</span>}
         </div>
+
+        <dl className="recap">
+          <div>
+            <dt>Sous-total</dt>
+            <dd>{formaterPrix(sousTotal)}</dd>
+          </div>
+          <div>
+            <dt>Livraison</dt>
+            <dd>{frais === 0 ? <span className="offerte">Offerte</span> : formaterPrix(frais)}</dd>
+          </div>
+        </dl>
+        {frais > 0 && resteAvantGratuit > 0 && (
+          <p className="astuce-livraison">
+            Plus que {formaterPrix(resteAvantGratuit)} pour profiter de la livraison offerte.
+          </p>
+        )}
 
         <div className="total-ligne">
           <span>Total</span>

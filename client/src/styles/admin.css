@@ -457,3 +457,10 @@ select.select-etat {
     margin-bottom: 14px;
   }
 }
+
+/* Deuxieme ligne discrete dans une cellule (adresse, detail du total) */
+.sous-ligne {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--encre-doux);
+}

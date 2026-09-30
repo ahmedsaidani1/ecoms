@@ -139,7 +139,7 @@ export default function Commandes() {
                 <th>Numéro</th>
                 <th>Date</th>
                 <th>Client</th>
-                <th>Gouvernorat</th>
+                <th>Livraison</th>
                 <th>Téléphone</th>
                 <th>Produit</th>
                 <th>Qté</th>
@@ -154,11 +154,19 @@ export default function Commandes() {
                   <td style={{ whiteSpace: 'nowrap' }}>{c.numero}</td>
                   <td style={{ whiteSpace: 'nowrap' }}>{formaterDate(c.createdAt)}</td>
                   <td>{c.nomComplet}</td>
-                  <td>{c.gouvernorat}</td>
+                  <td style={{ minWidth: 180 }}>
+                    <strong>{c.gouvernorat}</strong>
+                    <div className="sous-ligne">{c.adresse || 'Adresse non renseignée'}</div>
+                  </td>
                   <td>{c.telephone}</td>
                   <td>{c.produitNom}</td>
                   <td>{c.quantite}</td>
-                  <td style={{ whiteSpace: 'nowrap' }}>{formaterPrix(c.total)}</td>
+                  <td style={{ whiteSpace: 'nowrap' }}>
+                    {formaterPrix(c.total)}
+                    {c.fraisLivraison > 0 && (
+                      <div className="sous-ligne">dont {formaterPrix(c.fraisLivraison)} livraison</div>
+                    )}
+                  </td>
                   <td>
                     <span className={`etat ${CLASSES[c.statut]}`} style={{ marginBottom: 6 }}>
                       {LIBELLES[c.statut]}

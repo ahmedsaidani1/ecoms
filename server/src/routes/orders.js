@@ -3,6 +3,7 @@ import Order, { STATUTS } from '../models/Order.js';
 import Product from '../models/Product.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { GOUVERNORATS } from '../utils/gouvernorats.js';
+import { fraisLivraison } from '../utils/livraison.js';
 
 const router = Router();
 
@@ -11,6 +12,7 @@ router.post('/', async (req, res, next) => {
   try {
     const nomComplet = (req.body.nomComplet || '').trim();
     const gouvernorat = (req.body.gouvernorat || '').trim();
+    const adresse = (req.body.adresse || '').trim().replace(/\s+/g, ' ');
     const telephone = String(req.body.telephone || '').replace(/\s/g, '');
     const quantite = Number(req.body.quantite);
     const produitId = req.body.produit;
@@ -20,6 +22,12 @@ router.post('/', async (req, res, next) => {
     }
     if (!GOUVERNORATS.includes(gouvernorat)) {
       return res.status(400).json({ message: 'Gouvernorat invalide' });
+    }
+    if (adresse.length < 5) {
+      return res.status(400).json({ message: 'Adresse de livraison incomplète' });
+    }
+    if (adresse.length > 200) {
+      return res.status(400).json({ message: 'Adresse trop longue (200 caractères maximum)' });
     }
     if (!/^[0-9]{8}$/.test(telephone)) {
       return res.status(400).json({ message: 'Le numéro de téléphone doit contenir 8 chiffres' });
@@ -34,20 +42,31 @@ router.post('/', async (req, res, next) => {
     }
 
     const prixUnitaire = produit.prixFinal;
+    const sousTotal = Math.round(prixUnitaire * quantite * 1000) / 1000;
+    const frais = fraisLivraison(sousTotal);
+
     const commande = await Order.create({
       nomComplet,
       gouvernorat,
+      adresse,
       telephone,
       quantite,
       produit: produit._id,
       produitNom: produit.nom,
       prixUnitaire,
       promotion: produit.promotion,
-      total: Math.round(prixUnitaire * quantite * 1000) / 1000,
+      sousTotal,
+      fraisLivraison: frais,
+      total: Math.round((sousTotal + frais) * 1000) / 1000,
       note: (req.body.note || '').trim(),
     });
 
-    res.status(201).json({ numero: commande.numero, total: commande.total });
+    res.status(201).json({
+      numero: commande.numero,
+      sousTotal: commande.sousTotal,
+      fraisLivraison: commande.fraisLivraison,
+      total: commande.total,
+    });
   } catch (e) {
     next(e);
   }
@@ -60,7 +79,13 @@ router.get('/', requireAdmin, async (req, res, next) => {
     if (req.query.statut && STATUTS.includes(req.query.statut)) filtre.statut = req.query.statut;
     if (req.query.q) {
       const regex = { $regex: String(req.query.q).trim(), $options: 'i' };
-      filtre.$or = [{ nomComplet: regex }, { telephone: regex }, { numero: regex }, { produitNom: regex }];
+      filtre.$or = [
+        { nomComplet: regex },
+        { telephone: regex },
+        { numero: regex },
+        { produitNom: regex },
+        { adresse: regex },
+      ];
     }
     const commandes = await Order.find(filtre).sort({ createdAt: -1 }).limit(500);
     res.json(commandes);
